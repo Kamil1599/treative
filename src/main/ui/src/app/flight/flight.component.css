@@ -1,0 +1,67 @@
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-element-row {
+  border-bottom-width: 0;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+.example-element-row:not(.example-expanded-row):hover {
+  background: #777;
+}
+
+.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row {
+  border-bottom-width: 0;
+}
+
+
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: #777;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+
+.no-borders {
+  /*border-bottom-style: none;*/
+  /*border-top-style: none;*/
+}
+
+.button-paginator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  height: max-content;
+  width: 100px;
+}

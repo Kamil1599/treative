@@ -1,0 +1,206 @@
+<!--<mat-form-field>-->
+<!--  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">-->
+<!--</mat-form-field>-->
+
+<div class=" mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+
+    <!--    &lt;!&ndash; ID Column &ndash;&gt;-->
+    <!--    <ng-container matColumnDef="id">-->
+    <!--      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID</th>-->
+    <!--      <td mat-cell *matCellDef="let element"> {{element.id}} </td>-->
+    <!--    </ng-container>-->
+
+    <!--    Departure Time Column-->
+    <ng-container matColumnDef="departureDateTime">
+      <th mat-header-cell *matHeaderCellDef> Departure Time</th>
+      <td mat-cell *matCellDef="let flight"> {{flight.departureDateTime | date:'MMM d, y, H:mm'}} </td>
+    </ng-container>
+
+    <!--    Arrival Time Column-->
+    <ng-container matColumnDef="arrivalDateTime">
+      <th mat-header-cell *matHeaderCellDef> Arrival Time</th>
+      <td mat-cell *matCellDef="let flight"> {{flight.arrivalDateTime | date:'MMM d, y, H:mm'}} </td>
+    </ng-container>
+
+    <!-- Number Of Seats Column -->
+    <ng-container matColumnDef="numberOfSeats">
+      <th mat-header-cell *matHeaderCellDef> Number of Seats</th>
+      <td mat-cell *matCellDef="let flight"> {{flight.tourists.length}}/{{flight.numberOfSeats}} </td>
+    </ng-container>
+
+    <!-- Ticket Price Column -->
+    <ng-container matColumnDef="ticketPrice">
+      <th mat-header-cell *matHeaderCellDef> Ticket Price</th>
+      <td mat-cell *matCellDef="let flight"> {{flight.ticketPrice}} </td>
+    </ng-container>
+
+    <!-- Delete Button Column -->
+    <ng-container matColumnDef="deleteButton">
+      <th mat-header-cell *matHeaderCellDef> Delete</th>
+      <td mat-cell class="no-borders" *matCellDef="let flight">
+        <i class="material-icons clickable" (click)="deleteFlight(flight)">
+          delete_forever
+        </i></td>
+    </ng-container>
+
+    <!-- Expanded Details    -->
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let flight" [attr.colspan]="flightColumns.length">
+        <div class="element-detail"
+             [@detailExpand]="flight == expandedElement ? 'expanded' : 'collapsed'">
+          <div style="width: 100%">
+            <span><b>Tourists saved for this flight</b></span>
+            <div class=" mat-elevation-z2">
+              <table mat-table [dataSource]="flight.tourists" multiTemplateDataRows>
+
+                <!--              &lt;!&ndash; ID Column &ndash;&gt;-->
+                <!--              <ng-container matColumnDef="id">-->
+                <!--                <th mat-header-cell *matHeaderCellDef mat-sort-header> ID</th>-->
+                <!--                <td mat-cell *matCellDef="let element"> {{element.id}} </td>-->
+                <!--              </ng-container>-->
+
+                <!-- First Name Column -->
+                <ng-container matColumnDef="firstName">
+                  <th mat-header-cell *matHeaderCellDef> First Name</th>
+                  <td mat-cell class="no-borders" *matCellDef="let tourist"> {{tourist.firstName}} </td>
+                  <td mat-footer-cell *matFooterCellDef>
+                    <span><b>Add tourist</b></span>
+                  </td>
+                </ng-container>
+
+                <!-- Last Name Column -->
+                <ng-container matColumnDef="lastName">
+                  <th mat-header-cell *matHeaderCellDef> Last Name</th>
+                  <td mat-cell class="no-borders" *matCellDef="let tourist"> {{tourist.lastName}} </td>
+                  <td mat-footer-cell *matFooterCellDef>
+
+                    <!--  Search Box-->
+                    <mat-form-field>
+                      <input matInput #searchBox id="search-box" placeholder="Search"
+                             (keyup)="search(searchBox.value)"
+                             (focusout)="searchBox.value = ''"
+                             (focusout)="searchFocusOut()"/>
+
+                      <!--                      Search result-->
+                      <div style="  background: ghostwhite">
+                        <mat-option *ngFor="let tourist of touristsSearch$ | async">
+                          <p (click)="addTouristToFlight(tourist,flight)">
+                            <span>{{tourist.firstName}} {{tourist.lastName}}</span>
+                          </p>
+                        </mat-option>
+                      </div>
+                    </mat-form-field>
+                  </td>
+                </ng-container>
+
+                <!-- Last Name Column -->
+                <ng-container matColumnDef="gender">
+                  <th mat-header-cell *matHeaderCellDef> Gender</th>
+                  <td mat-cell class="no-borders" *matCellDef="let tourist"> {{tourist.gender}} </td>
+                  <td mat-footer-cell *matFooterCellDef></td>
+                </ng-container>
+
+                <!-- Last Name Column -->
+                <ng-container matColumnDef="dayOfBirth">
+                  <th mat-header-cell *matHeaderCellDef> Day of Birth</th>
+                  <td mat-cell class="no-borders"
+                      *matCellDef="let tourist"> {{tourist.dayOfBirth | date:'MMM d, y'}} </td>
+                  <td mat-footer-cell *matFooterCellDef></td>
+                </ng-container>
+
+                <!-- Last Name Column -->
+                <ng-container matColumnDef="country">
+                  <th mat-header-cell *matHeaderCellDef> Country</th>
+                  <td mat-cell class="no-borders" *matCellDef="let tourist"> {{tourist.country}} </td>
+                  <td mat-footer-cell *matFooterCellDef></td>
+                </ng-container>
+
+                <!-- Remove Button Column -->
+                <ng-container matColumnDef="removeButton">
+                  <th mat-header-cell *matHeaderCellDef> Remove</th>
+                  <td mat-cell class="no-borders" *matCellDef="let tourist">
+                    <i class="material-icons clickable" (click)="removeTouristFormFlight(tourist,flight)">
+                      cancel
+                    </i></td>
+                  <td mat-footer-cell *matFooterCellDef></td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="touristColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: touristColumns;"></tr>
+                <tr mat-footer-row *matFooterRowDef="touristColumns"></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="flightColumns"></tr>
+    <tr mat-row *matRowDef="let flight; columns: flightColumns;"
+        class="example-element-row"
+        [class.example-expanded-row]="expandedElement === flight"
+        (click)="expandedElement = expandedElement === flight ? null : flight">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+  </table>
+
+
+  <!-- New Flight Form -->
+  <form [formGroup]="newFlightForm" [hidden]="isFormHidden">
+    <span>Add New Flight</span>
+    <div class="row">
+
+      <!--  Departure Time Input    -->
+      <mat-form-field class="full-width">
+        <input matInput [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Departure Time"
+               formControlName="departureDateTime">
+        <owl-date-time #dt1></owl-date-time>
+        <mat-error *ngIf="departureDateTime.hasError('required')">
+          Departure time is required
+        </mat-error>
+      </mat-form-field>
+
+      <!--  Arrival Time Input    -->
+      <mat-form-field class="full-width">
+        <input matInput [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Arrival Time"
+               formControlName="arrivalDateTime" required>
+        <owl-date-time #dt2></owl-date-time>
+        <mat-error *ngIf="arrivalDateTime.hasError('required')">
+          Arrival time is required
+        </mat-error>
+      </mat-form-field>
+
+      <!--      Numbers Of Seats Input-->
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Number of Seats" formControlName="numberOfSeats" required>
+        <mat-error *ngIf="numberOfSeats.hasError('required')">
+          Number of seats is required
+        </mat-error>
+      </mat-form-field>
+
+      <!--      Ticket Price Input-->
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Ticket Price" formControlName="ticketPrice" required>
+        <span matPrefix>$&nbsp;</span>
+        <span matSuffix>.00</span>
+        <mat-error *ngIf="ticketPrice.hasError('required')">
+          Ticket price is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+
+  <div class="button-paginator">
+    <button class="button" mat-stroked-button [disabled]="(!isFormHidden)&&newFlightForm.invalid"
+            (click)="addFlightClicked()">Add Flight
+    </button>
+    <mat-paginator
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [length]="totalElements"
+      (page)="changePage($event)">
+    </mat-paginator>
+  </div>
+</div>
